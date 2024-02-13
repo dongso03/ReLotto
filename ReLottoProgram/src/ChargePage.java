@@ -6,6 +6,7 @@ public class ChargePage extends JFrame {
     private JTextField textField;
     private JButton btnNewButton_1;
     public static FirstPage firstPage;
+	private JLabel lblNewLabel_1;
     public ChargePage(FirstPage firstPage) {
         this.firstPage = firstPage;
         extracted();
@@ -43,9 +44,10 @@ public class ChargePage extends JFrame {
 
                     if (rechargeAmount > 0 && rechargeAmount <= 10000000) {
                         User.addAmount(rechargeAmount);
+                        lblNewLabel_1.setText(String.valueOf(User.getAmount()));
                         setVisible(false);
                         firstPage.setVisible(true);
-                        SaveMethod.saveAmount();
+                       
                         System.out.println(User.getAmount());
                     } else {
                     	System.out.println("충전할 금액이 올바르지 않습니다.");
@@ -62,7 +64,7 @@ public class ChargePage extends JFrame {
         lblNewLabel.setBounds(43, 153, 87, 15);
         panel.add(lblNewLabel);
 
-        JLabel lblNewLabel_1 = new JLabel("현재 금액: " + User.getAmount());
+        lblNewLabel_1 = new JLabel("현재 금액: " + User.getAmount());
         lblNewLabel_1.setBounds(142, 198, 151, 15);
         panel.add(lblNewLabel_1);
 

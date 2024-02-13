@@ -9,14 +9,14 @@ public class SaveMethod {
     private PurchasePage purchasePage;
     private File lottoNumFile;
     private static File amount;
-    private static int fileCounter = 0;
+    public static int fileCounter = 0;
 
     public SaveMethod(PurchasePage purchasePage) {
         this.purchasePage = purchasePage;
         generateNewFile();
     }
 
-    private void generateNewFile() {
+    public void generateNewFile() {
         String fileName = "lottoNums" + fileCounter + ".txt";
         lottoNumFile = new File(fileName);
     }

@@ -31,6 +31,7 @@ public class FirstPage extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
 				purchasePage.setVisible(true);
+				purchasePage.currentAmount.setText(String.valueOf(User.amount));
 			}
 		});
 		btncharge.addActionListener(new ActionListener() {

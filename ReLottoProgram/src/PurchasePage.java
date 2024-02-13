@@ -29,16 +29,22 @@ public class PurchasePage extends JFrame {
 
 	private static List<Integer> selectedNumbers = new ArrayList<>();
 	private int selectedCount = 0;
+	int selectCount = 0;
 	public Map<Integer, JLabel[]> map;
 	int sumSelectedCombo = 0;
 	int selectedCombo = 0;
-
+	private int comboboxCount = 0;
 	public JLabel[] lbl1;
 	public JLabel[] lbl2;
 	public JLabel[] lbl3;
 	public JLabel[] lbl4;
 	public JLabel[] lbl5;
-	private JLabel currentAmount;
+	public JLabel currentAmount;
+	private JButton btnNewButton_1;
+	private JToggleButton btnAuto;
+	private JButton btnOkay;
+	private JLabel amountToPay;
+	private String[] comboBoxLists;
 
 	public PurchasePage(SaveMethod saveMethod) {
 		this.saveMethod = saveMethod;
@@ -82,14 +88,23 @@ public class PurchasePage extends JFrame {
 		lblNewLabel.setBounds(12, 31, 35, 15);
 		panel.add(lblNewLabel);
 
-		String[] comboBoxList = new String[] { "1", "2", "3", "4", "5" };
-		JComboBox comboBox = new JComboBox(comboBoxList);
+		comboBoxLists = new String[] { "1", "2", "3", "4", "5" };
+		JComboBox comboBox = new JComboBox(comboBoxLists);
 		comboBox.setBounds(58, 28, 60, 21);
 		panel.add(comboBox);
 
-		JToggleButton btnAuto = new JToggleButton("자동");
+		btnAuto = new JToggleButton("자동");
 		btnAuto.setBounds(131, 27, 92, 23);
 		panel.add(btnAuto);
+		btnAuto.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (btnAuto.isSelected() && selectedCount == 6) {
+					btnOkay.setEnabled(false);
+					btnOkay.setEnabled(true);
+				}
+			}
+		});
 
 		map = new HashMap<>();
 		map.put(1, lbl1);
@@ -98,12 +113,11 @@ public class PurchasePage extends JFrame {
 		map.put(4, lbl4);
 		map.put(5, lbl5);
 
-		JButton btnOkay = new JButton("확인");
+		btnOkay = new JButton("확인");
 		btnOkay.setBounds(235, 27, 97, 23);
 		panel.add(btnOkay);
 		btnOkay.addActionListener(new ActionListener() {
 
-			int selectCount = 0;
 			int selectedCombo;
 			public JLabel[] currentLabels;
 
@@ -144,11 +158,20 @@ public class PurchasePage extends JFrame {
 							} else {
 								btnOkay.setEnabled(false);
 								btnOkay.setEnabled(true);
-								sumSelectedCombo -= selectedCombo;
+								if (sumSelectedCombo > 0) {
+									sumSelectedCombo -= selectedCombo;
+								}
 							}
 
 							// }
 
+						} else if (btnAuto.isSelected() && selectedCount == 6) {
+							btnOkay.setEnabled(false);
+							btnOkay.setEnabled(true);
+							if (sumSelectedCombo > 0) {
+								sumSelectedCombo -= selectedCombo;
+							}
+							System.out.println(selectedCount);
 						} else { // 자동 버튼 눌렀을 때
 							Set<Integer> nonDuplicateNumber = new HashSet<>();
 
@@ -166,13 +189,28 @@ public class PurchasePage extends JFrame {
 						}
 						selectedNumbers.clear();
 						selectCount = 0;
-
 					}
 
 				} else {
 					btnOkay.setEnabled(false);
 					btnOkay.setEnabled(true);
-					sumSelectedCombo -= selectedCombo;
+					if (sumSelectedCombo > 0) {
+						sumSelectedCombo -= selectedCombo;
+					}
+				}
+
+				selectedCombo = comboBox.getSelectedIndex() + 1;
+				sumSelectedCombo += selectedCombo; // 누적값으로 설정
+
+				comboboxCount = comboBox.getSelectedIndex() + 1;
+				amountToPay.setText(String.valueOf(sumSelectedCombo * 1000));
+
+				if (Integer.parseInt(currentAmount.getText()) < Integer.parseInt(amountToPay.getText())) {
+					btnOkay.setEnabled(false);
+					btnOkay.setEnabled(true);
+					if (sumSelectedCombo > 0) {
+						sumSelectedCombo -= selectedCombo;
+					}
 				}
 
 				for (JToggleButton button : tbtn45) {
@@ -185,6 +223,7 @@ public class PurchasePage extends JFrame {
 				}
 
 			}
+
 		});
 
 		JPanel panel_1 = new JPanel();
@@ -327,17 +366,22 @@ public class PurchasePage extends JFrame {
 		getContentPane().add(panel_2);
 		panel_2.setLayout(null);
 
-		JButton btnNewButton_1 = new JButton("구매");
+		btnNewButton_1 = new JButton("구매");
 		btnNewButton_1.setBounds(340, 26, 69, 23);
 		panel_2.add(btnNewButton_1);
 		btnNewButton_1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				dispose();
-				saveMethod.saveLottoNums();
-				firstPage = new FirstPage();
-				firstPage.setVisible(true);
 
+				if (lbl1[2].getText().isEmpty()) {
+					btnNewButton_1.setEnabled(false);
+					btnNewButton_1.setEnabled(true);
+				} else {
+					dispose();
+					saveMethod.saveLottoNums();
+					firstPage = new FirstPage();
+					firstPage.setVisible(true);
+				}
 			}
 		});
 
@@ -352,11 +396,10 @@ public class PurchasePage extends JFrame {
 		currentAmount = new JLabel(String.valueOf(user.amount));
 		currentAmount.setBounds(28, 50, 57, 15);
 		panel_2.add(currentAmount);
-		
 
-		JLabel lblNewLabel_4 = new JLabel("수정할것 2");
-		lblNewLabel_4.setBounds(160, 50, 57, 15);
-		panel_2.add(lblNewLabel_4);
+		amountToPay = new JLabel("수정할것 2");
+		amountToPay.setBounds(160, 50, 57, 15);
+		panel_2.add(amountToPay);
 
 		JButton btnReset = new JButton("초기화");
 		btnReset.setBounds(144, 370, 97, 23);
